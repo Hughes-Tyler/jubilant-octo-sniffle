@@ -6,8 +6,35 @@ from sklearn.metrics import accuracy_score, roc_auc_score, confusion_matrix, cla
 from sklearn.preprocessing import LabelEncoder
 import matplotlib.pyplot as plt
 import seaborn as sns
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Retrieve username and password from environment variables
+USERNAME = os.getenv('STREAMLIT_USERNAME')
+PASSWORD = os.getenv('STREAMLIT_PASSWORD')
 
 def main():
+    # Check login state
+    if "logged_in" not in st.session_state:
+        st.session_state.logged_in = False
+
+    if not st.session_state.logged_in:
+        st.title("Login Page")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+
+        if st.button("Login"):
+            if username == USERNAME and password == PASSWORD:
+                st.session_state.logged_in = True
+            else:
+                st.error("Invalid username or password")
+    else:
+        run_ml_app()
+
+def run_ml_app():
     st.title("Machine Learning Prediction App")
 
     uploaded_file = st.file_uploader("Upload your input CSV file", type=["csv"])
